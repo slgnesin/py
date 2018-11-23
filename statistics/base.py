@@ -47,7 +47,7 @@ def distance(value1,value2,tag,data=None,p=None):
         '''
         s=np.cov(data.T)
         si=np.linalg.inv(s)
-        diff=data[value1]-data[value2]
+        diff=value1-value2
         result=np.sqrt(np.dot(np.dot(diff,si),diff.T))
         return result
     elif tag=='manhattan':

@@ -22,15 +22,15 @@ class KMeans:
             cores.append(self.data[i])
         return cores
 
-    def sort(self,cores):
+    def sort(self,cores,distTag,p):
         sortList=[]
         for i in range(len(self.data)):
             #对比样本到每个质心的距离，将距离最近的质心索引存入到sortList中
-            minDist=[]
+            dists=[]
             for j in range(self.k):
-                dist=base.distance(self.data[i],cores[j],'euclidean')
-                minDist.append(dist)
-            sortList.append(np.argmin(minDist))
+                dist=base.distance(self.data[i],cores[j],distTag,self.data,p)
+                dists.append(dist)
+            sortList.append(np.argmin(dists))
             sort=np.array(sortList)
             sort=np.reshape(sort,(len(sort),1))
         return sort
@@ -55,13 +55,13 @@ class KMeans:
     def silhouette(self):
         return None
 
-def kMeansProc(data,k,times=2):
+def kMeansProc(data,k,times=2,distTag='euclidean',p=1):
     #分类不再发生变化，或迭代完成时结束
     clu=KMeans(data,k)
     cores=clu.initCores()
     oldSort=np.zeros((len(data),1))
     for i in range(times):
-        sort=clu.sort(cores)
+        sort=clu.sort(cores,distTag,p)
         sum=len(sort)
         for j in range(len(sort)):
             if oldSort[j]==sort[j]:
