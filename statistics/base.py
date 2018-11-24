@@ -1,11 +1,12 @@
 import numpy as np
+import pandas as pd
 from matplotlib import pyplot as plt
 
 def preprocess(data,tag):
     if tag=='minmax':
         return np.divide(data-np.min(data),np.max(data)-np.min(data))
     elif tag=='zscore':
-        return np.divide(i-np.mean(data),np.std(data))
+        return np.divide(data-np.mean(data),np.std(data))
     elif tag=='rmvmean':
         return data-np.mean(data)
 

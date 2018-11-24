@@ -13,8 +13,6 @@ while True:
 f.close()
 
 x=np.array(x)
-#print(np.shape(x))
-
-sort=cluster.kMeansProc(x,2,100,'mahalanobis',10)
-#print(x)
-#print(sort)
+sort=cluster.kMeansProc(x,2,2,'mahalanobis',10)
+print(x)
+print(sort)
