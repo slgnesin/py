@@ -3,6 +3,7 @@ import pandas as pd
 from matplotlib import pyplot as plt
 
 def preprocess(data,tag):
+    #只接收1行或1列的数据
     if tag=='minmax':
         return np.divide(data-np.min(data),np.max(data)-np.min(data))
     elif tag=='zscore':
@@ -10,7 +11,8 @@ def preprocess(data,tag):
     elif tag=='rmvmean':
         return data-np.mean(data)
 
-def descriptive(data,xLabel,yLabel):
+def descriptive(data,xpos,ypos):
+    #只接收1行或1列的数据
     str=''
     str+='\n'+"Minimum : %f" % np.min(data)
     str+='\n'+"Maximum : %f" % np.max(data)
@@ -22,10 +24,11 @@ def descriptive(data,xLabel,yLabel):
     str+='\n'+"Skewness : %f" % s.skew()
     str+='\n'+"Kurtosis : %f" % s.kurt()
     plt.hist(data,bins=100)
-    plt.text(xLabel,yLabel,str)
+    plt.text(xpos,ypos,str)
     plt.show()
 
 def distance(value1,value2,tag,data=None,p=None):
+    #默认value1和value2是向量
     '''
     默认行为样本，列为特征
     '''
@@ -33,12 +36,20 @@ def distance(value1,value2,tag,data=None,p=None):
         return np.sqrt(np.sum(np.power(value1-value2,2)))
         #return np.linalg.norm(data[v1]-data[v2])
     elif tag=='seuclidean':#标准欧氏距离，先对数据标准化，然后再用普通欧氏距离计算
+        ind1=ind2=0
+        for i in range(len(data)):
+            if np.all(value1==data[i]):
+                ind1=i
+            if np.all(value2==data[i]):
+                ind2=i
+        #print(ind1)
+        #print(ind2)
         mean=np.array([np.mean(data.T[i]) for i in range(len(data.T))])
         mean=np.reshape(mean,(1,len(mean)))
         stdev=np.array([np.std(data.T[i]) for i in range(len(data.T))])
         stdev=np.reshape(stdev,(1,len(stdev)))
         sdata=(data-mean)/stdev
-        return np.sqrt(np.sum(np.power(sdata[value1]-sdata[value2],2)))
+        return np.sqrt(np.sum(np.power(sdata[ind1]-sdata[ind2],2)))
     elif tag=='mahalanobis':
         '''
         1.求协方差矩阵s及其逆矩阵si
