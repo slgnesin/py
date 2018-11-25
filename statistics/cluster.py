@@ -1,5 +1,6 @@
 import numpy as np
 import base
+import random
 
 '''
 K均值聚类:
@@ -11,38 +12,35 @@ K均值聚类:
 
 class KMeans:
 
-    def __init__(self,data,k):
+    def __init__(self,data):
         self.data=data
-        self.k=k
 
-    def initCores(self):
-        indCore=np.random.randint(0,len(self.data)-1,self.k)
+    def initCores(self,k):
+        #生成不重复随机索引
+        indCore=random.sample(range(0,len(self.data)-1),k)
         cores=[]
         for i in indCore:
             cores.append(self.data[i])
         return cores
 
-    def sort(self,cores,distTag,p):
+    def sort(self,cores,k,distTag,p):
         sort=[]
         for i in range(len(self.data)):
             #对比样本到每个质心的距离，将距离最近的质心索引存入到sortList中
             dists=[]
-            for j in range(self.k):
+            for j in range(k):
                 dist=base.distance(self.data[i],cores[j],distTag,self.data,p)
                 dists.append(dist)
             sort.append(np.argmin(dists))
-            #sort=np.array(sortList)
-            #sort=np.reshape(sort,(len(sort),1))
         return sort
 
-'''
-    def updateCores(self,sort):
+    def updateCores(self,sort,indsort):
         #重新计算sort中所有同类样本的各特征均值，将结果存入新的质心
         cores=[]
-        for i in range(self.k):
+        for i in indsort:
             core=[]
             samples=[]
-            for j in range(len(self.data)):
+            for j in range(len(sort)):
                 if sort[j]==i:
                     samples.append(self.data[j])
             samples=np.array(samples)
@@ -52,12 +50,6 @@ class KMeans:
             core=np.reshape(core,(1,len(self.data.T)))
             cores.append(core)
         return cores
-'''
-
-    def updateCores(self,sort):
-        cores=[]
-        for i in range(len(sort)):
-        return cores
 
     #评估效果
     def silhouette(self):
@@ -65,15 +57,20 @@ class KMeans:
 
 def kMeansProc(data,k,times=2,distTag='euclidean',p=1):
     #分类不再发生变化，或迭代完成时结束
-    clu=KMeans(data,k)
-    cores=clu.initCores()
+    clu=KMeans(data)
+    cores=clu.initCores(k)
     oldSort=np.zeros((len(data),1))
     for i in range(times):
-        sort=clu.sort(cores,distTag,p)
-        #处理sort后降维问题
-
-        #print(k)
-        #检查上一次分类和本次是否一样
+        sort=clu.sort(cores,k,distTag,p)
+        #处理分类数量下降问题
+        indsort=[]
+        cpsort=[]
+        for j in range(len(sort)):
+            if sort[j] not in cpsort:
+                indsort.append(sort[j])
+            cpsort.append(sort[j])
+        k=len(indsort)
+        #检查本次分类是否和上次一致，若一致则结束迭代
         sum=len(sort)
         for j in range(len(sort)):
             if oldSort[j]==sort[j]:
@@ -82,10 +79,16 @@ def kMeansProc(data,k,times=2,distTag='euclidean',p=1):
             print("Iteration times : %d" % i)
             break
         oldSort=sort
-        print(sort)
-        cores=clu.updateCores(sort)
+        cores=clu.updateCores(sort,indsort)
     return sort
 
 class Hierarchical:
+    def __init__(self,data):
+        self.data=data
+
+def hierarchicalProc(data,method):
+    return None
+
+class DBSCAN:
     def __init__(self,data):
         self.data=data

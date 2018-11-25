@@ -42,8 +42,6 @@ def distance(value1,value2,tag,data=None,p=None):
                 ind1=i
             if np.all(value2==data[i]):
                 ind2=i
-        #print(ind1)
-        #print(ind2)
         mean=np.array([np.mean(data.T[i]) for i in range(len(data.T))])
         mean=np.reshape(mean,(1,len(mean)))
         stdev=np.array([np.std(data.T[i]) for i in range(len(data.T))])

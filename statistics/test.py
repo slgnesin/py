@@ -1,9 +1,10 @@
 import numpy as np
 import base
 import cluster
+from cluster import KMeans
 
 x=[]
-f=open('../../data/data1.csv','r')
+f=open('../../data/ppl8.csv','r')
 while True:
     lines=f.readlines(1000)
     if not lines:
@@ -14,5 +15,5 @@ f.close()
 
 x=np.array(x)
 
-res=cluster.kMeansProc(x,4,50,'seuclidean',10)
-#print(res)
+res=cluster.kMeansProc(x,5,20,'euclidean',10)
+print(len(res))
